@@ -1,6 +1,4 @@
-<?php
-session_start(); // Ensure session is started if this isn't already done elsewhere
-?>
+<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
