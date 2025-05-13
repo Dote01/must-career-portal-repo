@@ -1,4 +1,7 @@
-<?php require_once "includes/auth.php"; // Starts session and checks login include("includes/database.php"); include("includes/header.php"); ?> 
+<?php 
+require_once "includes/auth.php"; // Starts session and checks login include("includes/database.php"); 
+include("includes/header.php"); 
+require_once "includes/database.php";?> 
 <h2>Career Guidance</h2> 
 <?php $result = $conn->query("SELECT * FROM jobs"); while ($row = $result->fetch_assoc()) { 
     $course = isset($row['course']) && is_string($row['course']) ? htmlspecialchars($row['course']) : 'Unknown Course'; 
