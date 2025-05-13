@@ -9,8 +9,8 @@ echo "<h2>Career Guidance</h2>";
 
 $result = $conn->query("SELECT * FROM jobs");
 while ($row = $result->fetch_assoc()) {
-    echo "<h3>" . htmlspecialchars($row['course']) . "</h3>";
-    echo "<p>" . nl2br(htmlspecialchars($row['suggested_careers'])) . "</p>";
+$course = isset($_POST['course']) ? htmlspecialchars($_POST['course']) : ''; 
+$suggested_careers = isset($_POST['suggested_careers']) ? htmlspecialchars($_POST['suggested_careers']) : ''; 
 }
 $conn->close();
 
