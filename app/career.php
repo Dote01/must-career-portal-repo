@@ -7,7 +7,7 @@ include("includes/header.php");
 <?php
 echo "<h2>Career Guidance</h2>";
 
-$result = $conn->query("SELECT * FROM careers");
+$result = $conn->query("SELECT * FROM jobs");
 while ($row = $result->fetch_assoc()) {
     echo "<h3>" . htmlspecialchars($row['course']) . "</h3>";
     echo "<p>" . nl2br(htmlspecialchars($row['suggested_careers'])) . "</p>";
