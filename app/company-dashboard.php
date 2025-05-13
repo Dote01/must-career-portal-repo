@@ -1,6 +1,6 @@
 <?php
-require_once "includes/auth.php"; 
-require_once "includes/database.php"; 
+require_once "includes/auth.php";
+require_once "includes/database.php";
 
 if ($_SESSION['role'] !== 'company') {
     header("Location: dashboard.php");
@@ -21,7 +21,7 @@ $result = $stmt->get_result();
         <h3><?= htmlspecialchars($job['title']) ?> at <?= htmlspecialchars($job['company']) ?></h3>
         <p><?= nl2br(htmlspecialchars($job['description'])) ?></p>
         <strong>Deadline:</strong> <?= htmlspecialchars($job['deadline']) ?><br>
-        <a href="job-edit.php?id=<?= $job['id'] ?>">Edit</a> | 
+        <a href="job-edit.php?id=<?= $job['id'] ?>">Edit</a> |
         <a href="job-delete.php?id=<?= $job['id'] ?>">Delete</a>
     </div>
     <hr>

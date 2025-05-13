@@ -17,4 +17,3 @@ if ($stmt->execute()) {
 } else {
     echo "Error deleting job.";
 }
-?>
