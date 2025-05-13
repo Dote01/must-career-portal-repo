@@ -1,20 +1,13 @@
-
-
+"/"
 <?php
+session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
+    header("Location: login.php");
+    exit();
+}
 
-include 'includes/database.php'; // Make sure database connection is established
-
-// Fetch user profile data
-$user_id = $_SESSION['user_id'];
-$user_query = $conn->query("SELECT username, email FROM users WHERE id = $user_id");
-$user = $user_query->fetch_assoc();
-
-// Job application stats (you can expand this later)
-$app_query = $conn->query("SELECT COUNT(*) AS total FROM applications WHERE user_id = $user_id");
-$app_stats = $app_query->fetch_assoc();
-$total_applications = $app_stats['total'];
-
-$conn->close();
+require_once 'includes/database.php';
+$userId = $_SESSION['user_id'];
 ?>
 
 <!DOCTYPE html>
@@ -23,23 +16,27 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Student Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css"> <!-- Optional global CSS -->
     <style>
-        .dashboard-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding: 20px;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
         }
-        .profile-box, .stats-box {
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        h2,
+        h3 {
+            color: #2c3e50;
+        }
+
+        .card {
+            background: #f4f4f4;
             padding: 15px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            box-shadow: 0 0 5px #ccc;
-        }
-        canvas {
-            max-width: 600px;
+            border-radius: 6px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -47,49 +44,64 @@ $conn->close();
 <body>
     <?php include 'includes/header.php'; ?>
 
-    <div class="dashboard-container">
-        <h2>Welcome to the Student Dashboard</h2>
-        <p>Here you can find career resources, job listings, and application history.</p>
+    <h2>Welcome to the Student Dashboard</h2>
+    <p>Here you can find career resources, job listings, and application history.</p>
 
-        <!-- Profile Info -->
-        <div class="profile-box">
-            <h3>Your Profile</h3>
-            <p><strong>Username:</strong> <?= htmlspecialchars($user['username']) ?></p>
-            <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
+    <div class="section">
+        <h3>Career Resources</h3>
+        <div class="card">
+            <strong>Resume Tips:</strong> Keep it concise, highlight your skills, and tailor it to each job.
         </div>
-
-        <!-- Application Stats -->
-        <div class="stats-box">
-            <h3>Application Statistics</h3>
-            <canvas id="appChart"></canvas>
+        <div class="card">
+            <strong>Interview Advice:</strong> Research the company, practice common questions, and stay confident.
+        </div>
+        <div class="card">
+            <strong>Learning:</strong> Consider online platforms like Coursera, Udemy, or LinkedIn Learning.
         </div>
     </div>
 
-    <script>
-        const ctx = document.getElementById('appChart').getContext('2d');
-        const appChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Applications'],
-                datasets: [{
-                    label: 'Total Applications Submitted',
-                    data: [<?= $total_applications ?>],
-                    backgroundColor: '#3498db'
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0
-                        }
-                    }
-                }
-            }
-        });
-    </script>
+    <div class="section">
+        <h3>Latest Job Listings</h3>
+        <?php
+        $jobs = $conn->query("SELECT * FROM jobs ORDER BY deadline ASC LIMIT 5");
+        if ($jobs && $jobs->num_rows > 0):
+            while ($job = $jobs->fetch_assoc()):
+        ?>
+                <div class="card">
+                    <strong><?= htmlspecialchars($job['title']) ?></strong> at <?= htmlspecialchars($job['company']) ?><br>
+                    <?= htmlspecialchars($job['description']) ?><br>
+                    <em>Deadline: <?= htmlspecialchars($job['deadline']) ?></em><br>
+                    <a href="apply.php?job_id=<?= $job['id'] ?>">Apply</a>
+                </div>
+            <?php endwhile;
+        else: ?>
+            <p>No job listings found.</p>
+        <?php endif; ?>
+    </div>
+
+    <div class="section">
+        <h3>Your Application History</h3>
+        <?php
+        $apps = $conn->query("
+            SELECT jobs.title, jobs.company, applications.applied_at 
+            FROM applications 
+            JOIN jobs ON applications.job_id = jobs.id 
+            WHERE applications.user_id = $userId 
+            ORDER BY applications.applied_at DESC 
+            LIMIT 5
+        ");
+        if ($apps && $apps->num_rows > 0):
+            while ($app = $apps->fetch_assoc()):
+        ?>
+                <div class="card">
+                    Applied for <strong><?= htmlspecialchars($app['title']) ?></strong> at <?= htmlspecialchars($app['company']) ?><br>
+                    On <?= date("F j, Y", strtotime($app['applied_at'])) ?>
+                </div>
+            <?php endwhile;
+        else: ?>
+            <p>You haven't applied for any jobs yet.</p>
+        <?php endif; ?>
+    </div>
 
     <?php include 'includes/footer.php'; ?>
 </body>
