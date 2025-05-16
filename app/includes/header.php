@@ -9,7 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
   <meta charset="UTF-8">
   <title>MUST Career Support Portal</title>
   <!-- Link your consolidated stylesheet -->
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
