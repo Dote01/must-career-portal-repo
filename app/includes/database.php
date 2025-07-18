@@ -1,11 +1,11 @@
 <?php
-$host = 'sql8.freesqldatabase.com';
-$user = 'sql8778351';
-$pass = 'nqsh76cQev';
-$dbname = 'sql8778351';
-$port = 3306;
+$host = "mysql";
+$username = "root";
+$password = "";
+$dbname = "must_career";
 
-$conn = new mysqli($host, $user, $pass, $dbname);
+
+$conn = new mysqli($host, $usernmame, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }

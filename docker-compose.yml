@@ -10,7 +10,7 @@ services:
     volumes:
       - ./app:/var/www/html/
     depends_on:
-      - db
+      - mysql
 
 
   db:
